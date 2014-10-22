@@ -41,6 +41,7 @@ namespace GarrysMod.AddonCreator
                     addon.Import(gma);
 
                     Console.WriteLine("Loaded addon {0} by {1}, Version {2}", addon.Title, addon.Author, addon.Version);
+                    Console.WriteLine("\t{0}", addon.Description);
 
                     // extract files
                     foreach (var file in addon.Files)
