@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GarrysMod.AddonCreator", "GarrysMod.AddonCreator\GarrysMod.AddonCreator.csproj", "{E33D031D-7866-40F9-9362-2776CB4A7B5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GarrysMod.AddonCreator", "src\addoncreator\GarrysMod.AddonCreator.csproj", "{E33D031D-7866-40F9-9362-2776CB4A7B5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
