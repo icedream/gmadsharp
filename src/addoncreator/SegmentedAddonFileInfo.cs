@@ -25,14 +25,16 @@ namespace GarrysMod.AddonCreator
                 var output = new byte[_len];
                 var oldpos = _stream.Position;
                 _stream.Position = _pos;
-                for (long i = 0; i < _len; i += int.MaxValue) // for loop for supporting long file sizes
+                for (long i = 0; i < _len; i += int.MaxValue) // for-loop for supporting long file sizes
                 {
                     var toRead = (int) Math.Min(int.MaxValue, _len);
                     var buffer = new byte[toRead];
                     var readReal = _stream.Read(buffer, 0, toRead);
-                    i -= (toRead - readReal); // make absolutely sure everything gets read
                     buffer.CopyTo(output, i);
+
+                    i -= (toRead - readReal); // make absolutely sure everything gets read
                 }
+                _stream.Position = oldpos;
                 return output;
             }
         }

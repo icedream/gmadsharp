@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,7 +29,8 @@ namespace GarrysMod.AddonCreator
         /// <param name="withMetadata">Import all metadata (title, description, creator, timestamp, etc.) as well?</param>
         public void Import(string path, bool withMetadata = true)
         {
-            using (var stream = File.OpenRead(path))
+            var stream = File.OpenRead(path);
+
             {
                 var sr = new BinaryReader(stream, Encoding.GetEncoding("windows-1252"));
 
@@ -39,6 +41,7 @@ namespace GarrysMod.AddonCreator
 
                 // Check addon's CRC32 hash
                 {
+                    Debug.WriteLine("Checking CRC32...");
                     var baseAddon = new byte[stream.Length - sizeof (int)];
                     var oldpos = stream.Position;
                     stream.Position = 0;
@@ -48,26 +51,49 @@ namespace GarrysMod.AddonCreator
                     {
                         throw new IOException("Data corrupted (calculated hash mismatching hash in addon file)");
                     }
+                    stream.Position = oldpos;
                 }
 
                 // Import metadata
                 var newSteamID = sr.ReadUInt64();
                 var newBuildTimestamp = sr.ReadUInt64();
                 var newRequiredContentLen = sr.ReadByte();
+                var newTitle = sr.ReadString(true);
+                var newDescription = sr.ReadString(true);
+                var newAuthor = sr.ReadString(true);
+                var newVersion = sr.ReadInt32();
+
+                Debug.WriteLine("## Metadata ##");
+                Debug.WriteLine("Steam ID: {0}", newSteamID);
+                Debug.WriteLine("Build time: {0}", newBuildTimestamp);
+                Debug.WriteLine("Required content count: {0}", newRequiredContentLen);
+
+                Debug.Assert(newSteamID == 0);
+                Debug.Assert(newRequiredContentLen == 0);
+
                 for (var b = 0; b < newRequiredContentLen; b++)
                 {
                     var value = sr.ReadString(true);
                     if (withMetadata && !RequiredContent.Contains(value))
                         RequiredContent.Add(value);
                 }
+
                 if (withMetadata)
                 {
                     SteamID = newSteamID;
                     BuildTimestamp = newBuildTimestamp;
+                    Title = newTitle;
+                    Description = newDescription;
+                    Author = newAuthor;
+                    Version = newVersion;
                 }
 
+                Debug.WriteLine("");
+
                 // file list
+                Debug.WriteLine("## File list ##");
                 var newFilesList = new Dictionary<string, Tuple<long, int>>();
+                var expectedFileId = 1;
                 do
                 {
                     var fileId = sr.ReadUInt32();
@@ -79,6 +105,11 @@ namespace GarrysMod.AddonCreator
                     var fileSize = sr.ReadInt64();
                     var fileHash = sr.ReadInt32();
 
+                    Debug.WriteLine("\t#{2} : {0} ({1:0.0} kB)", filePath, fileSize / 1024, fileId);
+                    Debug.Assert(fileId == expectedFileId);
+
+                    expectedFileId++;
+
                     // avoid duplicates
                     if (newFilesList.ContainsKey(filePath))
                     {
@@ -87,12 +118,17 @@ namespace GarrysMod.AddonCreator
 
                     newFilesList.Add(filePath, new Tuple<long, int>(fileSize, fileHash));
                 } while (true);
+                Debug.WriteLine("");
 
+                Debug.WriteLine("## File import ##");
                 foreach (var file in newFilesList)
                 {
                     var filePath = file.Key;
                     var fileSize = file.Value.Item1;
                     var fileHash = file.Value.Item2;
+
+                    Debug.WriteLine("Extracting: {0} ({1:0.00} kB)", filePath, fileSize / 1024);
+
                     var fileContent = new byte[fileSize];
                    
                     // long-compatible file reading
@@ -139,6 +175,8 @@ namespace GarrysMod.AddonCreator
             var addonJson = JsonConvert.DeserializeObject<AddonJson>(Encoding.UTF8.GetString(Files["addon.json"].GetContents()));
             addonJson.CheckForErrors();
             addonJson.RemoveIgnoredFiles(ref files);
+
+            // TODO: Extract data from addon.json
 
             // Sort files
             var resultingFiles = new SortedDictionary<string, AddonFileInfo>(files);

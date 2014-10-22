@@ -76,7 +76,7 @@ namespace GarrysMod.AddonCreator
             if (RegularExpressions != null)
                 return;
 
-            RegularExpressions = Whitelist.Select(w => w.WildcardRegex).ToArray();
+            RegularExpressions = Whitelist.Select(w => w.WildcardRegex()).ToArray();
         }
 
         public static IEnumerable<string> FindBlacklistedFiles(IEnumerable<string> files)
