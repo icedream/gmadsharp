@@ -230,6 +230,7 @@ namespace GarrysMod.AddonCreator
 
             // Extract data from addon.json
             Title = addonJson.Title;
+            Author = addonJson.Author;
             Description = string.IsNullOrEmpty(addonJson.Description) ? string.Empty : addonJson.Description;
             Version = addonJson.Version;
 

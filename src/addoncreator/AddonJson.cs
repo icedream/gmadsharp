@@ -31,6 +31,9 @@ namespace GarrysMod.AddonCreator
         [JsonProperty("version")]
         public int Version { get; set; }
 
+        [JsonProperty("author")]
+        public string Author { get; set; }
+
         internal void CheckForErrors()
         {
             if (string.IsNullOrEmpty(Title))
