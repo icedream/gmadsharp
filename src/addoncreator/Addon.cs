@@ -161,7 +161,13 @@ namespace GarrysMod.AddonCreator
         /// <param name="path">The output file path, should be pointing to a writable location ending with ".gma".</param>
         public void Export(string path)
         {
-            // TODO: Enforce .gma file extension
+            // Enforce .gma extension
+            if (!path.EndsWith(".gma", StringComparison.OrdinalIgnoreCase))
+            {
+                var pathSplit = path.Split('.');
+                pathSplit[pathSplit.Length - 1] = "gma";
+                path = string.Join(".", pathSplit);
+            }
 
             // Checking for existing addon.json
             if (!Files.ContainsKey("addon.json"))
@@ -306,6 +312,4 @@ namespace GarrysMod.AddonCreator
             Version = 1;
         }
     }
-
-    // TODO: Newtonsoft.Json reference
 }
