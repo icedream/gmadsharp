@@ -5,9 +5,9 @@ namespace GarrysMod.AddonCreator
 {
     public class SegmentedAddonFileInfo : AddonFileInfo
     {
-        private Stream _stream;
-        private long _pos;
-        private long _len;
+        private readonly long _len;
+        private readonly long _pos;
+        private readonly Stream _stream;
         private int _hash;
 
         public SegmentedAddonFileInfo(Stream stream, long pos, long len, int fileHash)

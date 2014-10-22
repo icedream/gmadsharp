@@ -4,12 +4,12 @@ namespace GarrysMod.AddonCreator
 {
     public class PhysicalAddonFileInfo : AddonFileInfo
     {
+        private readonly FileInfo _fi;
+
         public PhysicalAddonFileInfo(string path)
         {
             _fi = new FileInfo(path);
         }
-
-        private FileInfo _fi;
 
         public override long Size
         {

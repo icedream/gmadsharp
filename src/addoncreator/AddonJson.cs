@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace GarrysMod.AddonCreator
@@ -14,7 +13,7 @@ namespace GarrysMod.AddonCreator
             Version = 1;
         }
 
-        [JsonProperty("title", NullValueHandling=NullValueHandling.Ignore)]
+        [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
         public string Title { get; set; }
 
         [JsonProperty("description")]

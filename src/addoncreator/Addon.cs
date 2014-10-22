@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,18 +11,68 @@ namespace GarrysMod.AddonCreator
 {
     public class Addon
     {
-        private static readonly byte[] FormatIdent = Encoding.ASCII.GetBytes("GMAD");
         private const byte FormatVersion = 3;
         private const uint AppID = 4000;
         private const uint CompressionSignature = 0xbeefcace;
+        private static readonly byte[] FormatIdent = Encoding.ASCII.GetBytes("GMAD");
 
-        public static void CreateFromFolder()
+        /// <summary>
+        ///     Initializes a new instance of <see cref="Addon" />
+        /// </summary>
+        public Addon()
         {
-            
+            Files = new Dictionary<string, AddonFileInfo>();
+            RequiredContent = new List<string>();
+            Version = 1;
         }
 
         /// <summary>
-        /// Imports a gmod addon into this instance.
+        ///     Returns the timestamp of when the addon was built. This data is retrieved from full imports and for new (unsaved)
+        ///     addons this is 0.
+        /// </summary>
+        public ulong BuildTimestamp { get; private set; }
+
+        /// <summary>
+        ///     The name of this addon.
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        ///     The author of this addon.
+        /// </summary>
+        public string Author { get; set; }
+
+        /// <summary>
+        ///     A description of this addon.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        ///     This addon's version.
+        /// </summary>
+        public int Version { get; set; }
+
+        /// <summary>
+        ///     The files to include in the addon.
+        /// </summary>
+        public Dictionary<string, AddonFileInfo> Files { get; private set; }
+
+        /// <summary>
+        ///     Currently unused.
+        /// </summary>
+        public ulong SteamID { get; set; }
+
+        /// <summary>
+        ///     Content that needs to exist in order to run this addon.
+        /// </summary>
+        public List<string> RequiredContent { get; private set; }
+
+        public static void CreateFromFolder()
+        {
+        }
+
+        /// <summary>
+        ///     Imports a gmod addon into this instance.
         /// </summary>
         /// <param name="path">Path to a gmod addon file.</param>
         /// <param name="withMetadata">Import all metadata (title, description, creator, timestamp, etc.) as well?</param>
@@ -105,7 +154,7 @@ namespace GarrysMod.AddonCreator
                     var fileSize = sr.ReadInt64();
                     var fileHash = sr.ReadInt32();
 
-                    Debug.WriteLine("\t#{2} : {0} ({1:0.0} kB)", filePath, fileSize / 1024, fileId);
+                    Debug.WriteLine("\t#{2} : {0} ({1:0.0} kB)", filePath, fileSize/1024, fileId);
                     Debug.Assert(fileId == expectedFileId);
 
                     expectedFileId++;
@@ -113,7 +162,8 @@ namespace GarrysMod.AddonCreator
                     // avoid duplicates
                     if (newFilesList.ContainsKey(filePath))
                     {
-                        throw new IOException("Found duplicate file path in addon file. Contact the addon creator and tell him to build a new proper addon file.");
+                        throw new IOException(
+                            "Found duplicate file path in addon file. Contact the addon creator and tell him to build a new proper addon file.");
                     }
 
                     newFilesList.Add(filePath, new Tuple<long, int>(fileSize, fileHash));
@@ -127,14 +177,14 @@ namespace GarrysMod.AddonCreator
                     var fileSize = file.Value.Item1;
                     var fileHash = file.Value.Item2;
 
-                    Debug.WriteLine("Extracting: {0} ({1:0.00} kB)", filePath, fileSize / 1024);
+                    Debug.WriteLine("Extracting: {0} ({1:0.00} kB)", filePath, fileSize/1024);
 
                     var fileContent = new byte[fileSize];
-                   
+
                     // long-compatible file reading
                     for (long i = 0; i < fileSize; i += int.MaxValue)
                     {
-                        var tempContent = sr.ReadBytes((int)Math.Min(int.MaxValue, fileSize));
+                        var tempContent = sr.ReadBytes((int) Math.Min(int.MaxValue, fileSize));
                         tempContent.CopyTo(fileContent, i);
                     }
 
@@ -151,12 +201,7 @@ namespace GarrysMod.AddonCreator
         }
 
         /// <summary>
-        /// Returns the timestamp of when the addon was built. This data is retrieved from full imports and for new (unsaved) addons this is 0.
-        /// </summary>
-        public ulong BuildTimestamp { get; private set; }
-
-        /// <summary>
-        /// Exports this addon into a GMA file.
+        ///     Exports this addon into a GMA file.
         /// </summary>
         /// <param name="path">The output file path, should be pointing to a writable location ending with ".gma".</param>
         public void Export(string path)
@@ -178,7 +223,8 @@ namespace GarrysMod.AddonCreator
             var files = Files;
 
             // Check for errors and ignores in addon.json
-            var addonJson = JsonConvert.DeserializeObject<AddonJson>(Encoding.UTF8.GetString(Files["addon.json"].GetContents()));
+            var addonJson =
+                JsonConvert.DeserializeObject<AddonJson>(Encoding.UTF8.GetString(Files["addon.json"].GetContents()));
             addonJson.CheckForErrors();
             addonJson.RemoveIgnoredFiles(ref files);
 
@@ -186,7 +232,7 @@ namespace GarrysMod.AddonCreator
             Title = addonJson.Title;
             Description = string.IsNullOrEmpty(addonJson.Description) ? string.Empty : addonJson.Description;
             Version = addonJson.Version;
-            
+
             // Create a stripped down version of addon.json for the output gma, it will replace the Description field
             var newDescription = JsonConvert.SerializeObject(new AddonJson
             {
@@ -206,8 +252,8 @@ namespace GarrysMod.AddonCreator
             if (blacklistedFiles.Any())
             {
                 throw new InvalidOperationException("Found files which aren't whitelisted. Remove or ignore those files before you retry packing your addon:"
-                    + Environment.NewLine + Environment.NewLine
-                    + string.Join(Environment.NewLine, blacklistedFiles));
+                                                    + Environment.NewLine + Environment.NewLine
+                                                    + string.Join(Environment.NewLine, blacklistedFiles));
             }
 
             using (var stream = new MemoryStream())
@@ -223,14 +269,15 @@ namespace GarrysMod.AddonCreator
                 sw.Write(SteamID);
 
                 // Build timestamp
-                sw.Write(BuildTimestamp = (ulong)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds);
+                sw.Write(BuildTimestamp = (ulong) (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds);
 
                 // Required content
                 if (RequiredContent.Count > byte.MaxValue)
                 {
-                    throw new IndexOutOfRangeException("Required content count must not exceed " + byte.MaxValue + " entries.");
+                    throw new IndexOutOfRangeException("Required content count must not exceed " + byte.MaxValue +
+                                                       " entries.");
                 }
-                sw.Write((byte)RequiredContent.Count);
+                sw.Write((byte) RequiredContent.Count);
                 foreach (var content in RequiredContent)
                 {
                     sw.Write(content, true);
@@ -245,7 +292,8 @@ namespace GarrysMod.AddonCreator
                 // File list
                 if (Files.Count > uint.MaxValue)
                 {
-                    throw new IndexOutOfRangeException("Number of addon files must not exceed " + uint.MaxValue + " elements.");
+                    throw new IndexOutOfRangeException("Number of addon files must not exceed " + uint.MaxValue +
+                                                       " elements.");
                 }
                 uint fileNum = 0;
                 foreach (var file in resultingFiles)
@@ -256,7 +304,7 @@ namespace GarrysMod.AddonCreator
                     sw.Write(file.Value.Size);
                     sw.Write(file.Value.Crc32Hash);
                 }
-                sw.Write((uint)0); // End of file list
+                sw.Write((uint) 0); // End of file list
 
                 // File contents
                 foreach (var file in resultingFiles)
@@ -277,51 +325,6 @@ namespace GarrysMod.AddonCreator
                     stream.CopyTo(outfile);
                 }
             }
-        }
-
-        /// <summary>
-        /// The name of this addon.
-        /// </summary>
-        public string Title { get; set; }
-        
-        /// <summary>
-        /// The author of this addon.
-        /// </summary>
-        public string Author { get; set; }
-
-        /// <summary>
-        /// A description of this addon.
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// This addon's version.
-        /// </summary>
-        public int Version { get; set; }
-
-        /// <summary>
-        /// The files to include in the addon.
-        /// </summary>
-        public Dictionary<string, AddonFileInfo> Files { get; private set; }
-
-        /// <summary>
-        /// Currently unused.
-        /// </summary>
-        public ulong SteamID { get; set; }
-
-        /// <summary>
-        /// Content that needs to exist in order to run this addon.
-        /// </summary>
-        public List<string> RequiredContent { get; private set; } 
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="Addon"/>
-        /// </summary>
-        public Addon()
-        {
-            Files = new Dictionary<string, AddonFileInfo>();
-            RequiredContent = new List<string>();
-            Version = 1;
         }
     }
 }

@@ -19,7 +19,8 @@ namespace GarrysMod.AddonCreator
                     // recursively add files
                     foreach (var file in folder.EnumerateFiles("*", SearchOption.AllDirectories))
                     {
-                        var relpath = MakeRelativePath(folder.FullName, file.FullName).Replace(Path.DirectorySeparatorChar, '/');
+                        var relpath =
+                            MakeRelativePath(folder.FullName, file.FullName).Replace(Path.DirectorySeparatorChar, '/');
                         Console.WriteLine("Adding: {0}", relpath);
 
                         addon.Files.Add(relpath, new PhysicalAddonFileInfo(file.FullName));
@@ -45,7 +46,8 @@ namespace GarrysMod.AddonCreator
                     foreach (var file in addon.Files)
                     {
                         var relpath = file.Key;
-                        var targetFile = new FileInfo(Path.Combine(folder.FullName, relpath.Replace('/', Path.DirectorySeparatorChar)));
+                        var targetFile =
+                            new FileInfo(Path.Combine(folder.FullName, relpath.Replace('/', Path.DirectorySeparatorChar)));
 
                         Console.WriteLine("Extracting: {0}", relpath);
 
@@ -63,7 +65,7 @@ namespace GarrysMod.AddonCreator
                             // long-compatible copy algorithm
                             for (long i = 0; i < buffer.LongLength; i += int.MaxValue)
                             {
-                                var toWrite = (int)Math.Min(int.MaxValue, buffer.LongLength - i);
+                                var toWrite = (int) Math.Min(int.MaxValue, buffer.LongLength - i);
                                 var toWriteBuf = buffer.AsEnumerable();
                                 for (long j = 0; j < i; j += int.MaxValue)
                                 {
