@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace GarrysMod.AddonCreator
 {
-    public class AddonWhitelist
+    public static class AddonWhitelist
     {
         private static readonly string[] Whitelist =
 		{
@@ -69,20 +70,20 @@ namespace GarrysMod.AddonCreator
 			"gamemodes/*/content/sound/*.ogg"
 		};
 
-        private static Regex[] RegularExpressions;
+        private static Regex[] _regularExpressions;
 
         static void ConvertWhitelist()
         {
-            if (RegularExpressions != null)
+            if (_regularExpressions != null)
                 return;
 
-            RegularExpressions = Whitelist.Select(w => w.WildcardRegex()).ToArray();
+            _regularExpressions = Whitelist.Select(w => w.WildcardRegex()).ToArray();
         }
 
         public static IEnumerable<string> FindBlacklistedFiles(IEnumerable<string> files)
         {
             ConvertWhitelist();
-            return files.Where(f => RegularExpressions.Any(rx => !rx.IsMatch(f)));
+            return files.Where(f => !_regularExpressions.Any(rx => rx.IsMatch(f)));
         }
     }
 }
