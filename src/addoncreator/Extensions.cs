@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace GarrysMod.AddonCreator
 {
-    static class BinaryCodecExt
+    static class Extensions
     {
+        public static Regex WildcardRegex(this string pattern)
+        {
+            return new Regex("^" + Regex.Escape(pattern)
+                .Replace(@"\*", ".*")
+                .Replace(@"\?", ".")
+                             + "$");
+        }
+
         public static string ReadString(this BinaryReader br, bool nullTerminated)
         {
             if (!nullTerminated)

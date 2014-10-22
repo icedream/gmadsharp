@@ -54,7 +54,9 @@
   <ItemGroup>
     <Compile Include="Addon.cs" />
     <Compile Include="AddonFileInfo.cs" />
-    <Compile Include="BinaryCodecExt.cs" />
+    <Compile Include="AddonJson.cs" />
+    <Compile Include="AddonWhitelist.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="JsonAddonFileInfo.cs" />
     <Compile Include="OptimizedCRC.cs" />
     <Compile Include="ParallelCRC.cs" />

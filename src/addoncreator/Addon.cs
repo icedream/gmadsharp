@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CRC32;
+using Newtonsoft.Json;
 
 namespace GarrysMod.AddonCreator
 {
@@ -132,10 +133,26 @@ namespace GarrysMod.AddonCreator
                 throw new FileNotFoundException("Addon building requires a valid addon.json file.");
             }
 
-            // TODO: Check addon.json for errors
-            // TODO: Ignore or remove files marked to be ignored in addon.json
-            // TODO: Sort in alphabetic order
-            // TODO: Filter files by general whitelist
+            var files = Files;
+
+            // Check for errors and ignores in addon.json
+            var addonJson = JsonConvert.DeserializeObject<AddonJson>(Encoding.UTF8.GetString(Files["addon.json"].GetContents()));
+            addonJson.CheckForErrors();
+            addonJson.RemoveIgnoredFiles(ref files);
+
+            // Sort files
+            var resultingFiles = new SortedDictionary<string, AddonFileInfo>(files);
+
+            // General whitelist
+            var blacklistedFiles = AddonWhitelist
+                .FindBlacklistedFiles(resultingFiles.Select(i => i.Key))
+                .ToArray();
+            if (blacklistedFiles.Any())
+            {
+                throw new InvalidOperationException("Found files which aren't whitelisted. Remove or ignore those files before you retry packing your addon:"
+                    + Environment.NewLine + Environment.NewLine
+                    + string.Join(Environment.NewLine, blacklistedFiles));
+            }
 
             using (var stream = new MemoryStream())
             {
@@ -175,7 +192,7 @@ namespace GarrysMod.AddonCreator
                     throw new IndexOutOfRangeException("Number of addon files must not exceed " + uint.MaxValue + " elements.");
                 }
                 uint fileNum = 0;
-                foreach (var file in Files)
+                foreach (var file in resultingFiles)
                 {
                     fileNum++;
                     sw.Write(fileNum);
@@ -186,7 +203,7 @@ namespace GarrysMod.AddonCreator
                 sw.Write((uint)0); // End of file list
 
                 // File contents
-                foreach (var file in Files)
+                foreach (var file in resultingFiles)
                 {
                     if (file.Value.Size == 0)
                         continue;
