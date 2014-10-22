@@ -94,7 +94,7 @@ namespace GarrysMod.AddonCreator
             if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
             if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
 
-            var fromUri = new Uri(fromPath);
+            var fromUri = new Uri(fromPath + Path.DirectorySeparatorChar);
             var toUri = new Uri(toPath);
 
             if (fromUri.Scheme != toUri.Scheme)
@@ -102,8 +102,8 @@ namespace GarrysMod.AddonCreator
                 return toPath;
             } // path can't be made relative.
 
-            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
-            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+            var relativeUri = fromUri.MakeRelativeUri(toUri);
+            var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
             if (toUri.Scheme.ToUpperInvariant() == "FILE")
             {
