@@ -32,12 +32,13 @@ namespace GarrysMod.AddonCreator
 
         public static void Write(this BinaryWriter bw, string value, bool nullTerminated)
         {
-            if (nullTerminated)
+            if (!nullTerminated)
             {
-                value += "\0";
+                bw.Write(value);
             }
 
-            bw.Write(value);
+            value += "\0";
+            bw.Write(Encoding.GetEncoding("windows-1252").GetBytes(value));
         }
     }
 }
