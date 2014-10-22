@@ -24,7 +24,10 @@ namespace GarrysMod.AddonCreator
         [JsonProperty("ignore")]
         public List<string> Ignores { get; set; }
 
-        public void CheckForErrors()
+        [JsonProperty("version")]
+        public int Version { get; set; }
+
+        internal void CheckForErrors()
         {
             if (string.IsNullOrEmpty(Title))
             {
