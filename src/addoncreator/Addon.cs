@@ -200,6 +200,7 @@ namespace GarrysMod.AddonCreator
 
                 using (var outfile = File.Create(path))
                 {
+                    stream.Position = 0;
                     stream.CopyTo(outfile);
                 }
             }
