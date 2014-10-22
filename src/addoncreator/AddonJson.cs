@@ -9,7 +9,12 @@ namespace GarrysMod.AddonCreator
 {
     public class AddonJson
     {
-        [JsonProperty("title")]
+        public AddonJson()
+        {
+            Version = 1;
+        }
+
+        [JsonProperty("title", NullValueHandling=NullValueHandling.Ignore)]
         public string Title { get; set; }
 
         [JsonProperty("description")]
@@ -21,7 +26,7 @@ namespace GarrysMod.AddonCreator
         [JsonProperty("tags")]
         public List<string> Tags { get; set; }
 
-        [JsonProperty("ignore")]
+        [JsonProperty("ignore", NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Ignores { get; set; }
 
         [JsonProperty("version")]
