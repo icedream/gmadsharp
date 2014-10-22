@@ -81,6 +81,7 @@ namespace GarrysMod.AddonCreator
 
         public static IEnumerable<string> FindBlacklistedFiles(IEnumerable<string> files)
         {
+            ConvertWhitelist();
             return files.Where(f => RegularExpressions.Any(rx => !rx.IsMatch(f)));
         }
     }
