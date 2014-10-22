@@ -182,10 +182,22 @@ namespace GarrysMod.AddonCreator
             addonJson.CheckForErrors();
             addonJson.RemoveIgnoredFiles(ref files);
 
-            // TODO: Extract data from addon.json
+            // Extract data from addon.json
+            Title = addonJson.Title;
+            Description = string.IsNullOrEmpty(addonJson.Description) ? string.Empty : addonJson.Description;
+            Version = addonJson.Version;
+            
+            // Create a stripped down version of addon.json for the output gma, it will replace the Description field
+            var newDescription = JsonConvert.SerializeObject(new AddonJson
+            {
+                Description = Description,
+                Tags = addonJson.Tags,
+                Type = addonJson.Type
+            });
 
             // Sort files
             var resultingFiles = new SortedDictionary<string, AddonFileInfo>(files);
+            resultingFiles.Remove("addon.json");
 
             // General whitelist
             var blacklistedFiles = AddonWhitelist
@@ -219,14 +231,14 @@ namespace GarrysMod.AddonCreator
                     throw new IndexOutOfRangeException("Required content count must not exceed " + byte.MaxValue + " entries.");
                 }
                 sw.Write((byte)RequiredContent.Count);
-                foreach (string content in RequiredContent)
+                foreach (var content in RequiredContent)
                 {
                     sw.Write(content, true);
                 }
 
                 // Metadata
                 sw.Write(Title, true);
-                sw.Write(Description, true);
+                sw.Write(newDescription, true); // "Description" field which is actually a trimmed down addon.json
                 sw.Write(Author, true);
                 sw.Write(Version);
 
