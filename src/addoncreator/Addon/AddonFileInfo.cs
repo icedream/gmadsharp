@@ -1,6 +1,6 @@
-using CRC32;
+using GarrysMod.AddonCreator.Hashing;
 
-namespace GarrysMod.AddonCreator
+namespace GarrysMod.AddonCreator.Addon
 {
     public abstract class AddonFileInfo
     {

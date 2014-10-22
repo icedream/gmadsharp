@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace CRC32
+namespace GarrysMod.AddonCreator.Hashing
 {
     public class ParallelCRC
     {

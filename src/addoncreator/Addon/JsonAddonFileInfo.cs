@@ -1,7 +1,7 @@
 using System.Text;
 using Newtonsoft.Json;
 
-namespace GarrysMod.AddonCreator
+namespace GarrysMod.AddonCreator.Addon
 {
     public class JsonAddonFileInfo : AddonFileInfo
     {

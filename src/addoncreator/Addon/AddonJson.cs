@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace GarrysMod.AddonCreator
+namespace GarrysMod.AddonCreator.Addon
 {
     public class AddonJson
     {

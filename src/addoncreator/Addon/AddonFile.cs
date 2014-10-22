@@ -4,12 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CRC32;
+using GarrysMod.AddonCreator.Hashing;
 using Newtonsoft.Json;
 
-namespace GarrysMod.AddonCreator
+namespace GarrysMod.AddonCreator.Addon
 {
-    public class Addon
+    public class AddonFile
     {
         private const byte FormatVersion = 3;
         private const uint AppID = 4000;
@@ -17,9 +17,9 @@ namespace GarrysMod.AddonCreator
         private static readonly byte[] FormatIdent = Encoding.ASCII.GetBytes("GMAD");
 
         /// <summary>
-        ///     Initializes a new instance of <see cref="Addon" />
+        ///     Initializes a new instance of <see cref="AddonFile" />
         /// </summary>
-        public Addon()
+        public AddonFile()
         {
             Files = new Dictionary<string, AddonFileInfo>();
             RequiredContent = new List<string>();

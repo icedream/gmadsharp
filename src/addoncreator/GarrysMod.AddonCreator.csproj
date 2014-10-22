@@ -52,19 +52,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Addon.cs" />
-    <Compile Include="AddonFileInfo.cs" />
-    <Compile Include="AddonJson.cs" />
-    <Compile Include="AddonWhitelist.cs" />
+    <Compile Include="Addon\AddonFile.cs" />
+    <Compile Include="Addon\AddonFileInfo.cs" />
+    <Compile Include="Addon\AddonJson.cs" />
+    <Compile Include="Addon\AddonWhitelist.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="JsonAddonFileInfo.cs" />
-    <Compile Include="OptimizedCRC.cs" />
-    <Compile Include="ParallelCRC.cs" />
-    <Compile Include="PhysicalAddonFileInfo.cs" />
+    <Compile Include="Addon\JsonAddonFileInfo.cs" />
+    <Compile Include="Hashing\OptimizedCRC.cs" />
+    <Compile Include="Hashing\ParallelCRC.cs" />
+    <Compile Include="Addon\PhysicalAddonFileInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SegmentedAddonFileInfo.cs" />
-    <Compile Include="TraditionalCRC.cs" />
+    <Compile Include="Addon\SegmentedAddonFileInfo.cs" />
+    <Compile Include="Hashing\TraditionalCRC.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

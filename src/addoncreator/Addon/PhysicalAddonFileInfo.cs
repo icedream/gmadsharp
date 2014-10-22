@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace GarrysMod.AddonCreator
+namespace GarrysMod.AddonCreator.Addon
 {
     public class PhysicalAddonFileInfo : AddonFileInfo
     {

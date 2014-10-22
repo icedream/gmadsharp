@@ -1,6 +1,6 @@
 using System;
 
-namespace CRC32
+namespace GarrysMod.AddonCreator.Hashing
 {
     public class OptimizedCRC
     {

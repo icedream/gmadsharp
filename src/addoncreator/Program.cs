@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using GarrysMod.AddonCreator.Addon;
 
 namespace GarrysMod.AddonCreator
 {
@@ -14,7 +15,7 @@ namespace GarrysMod.AddonCreator
                 {
                     var folder = new DirectoryInfo(args[1]);
                     var output = args[2];
-                    var addon = new Addon();
+                    var addon = new AddonFile();
 
                     // recursively add files
                     foreach (var file in folder.EnumerateFiles("*", SearchOption.AllDirectories))
@@ -37,7 +38,7 @@ namespace GarrysMod.AddonCreator
                 {
                     var gma = args[1];
                     var folder = new DirectoryInfo(args[2]);
-                    var addon = new Addon();
+                    var addon = new AddonFile();
                     addon.Import(gma);
 
                     Console.WriteLine("Loaded addon {0} by {1}, Version {2}", addon.Title, addon.Author, addon.Version);
