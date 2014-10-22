@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using GarrysMod.AddonCreator.Addon;
@@ -13,9 +14,20 @@ namespace GarrysMod.AddonCreator
             {
                 case "create":
                 {
+                    if (args.Length < 3)
+                    {
+                        goto default;
+                    }
+
                     var folder = new DirectoryInfo(args[1]);
                     var output = args[2];
                     var addon = new AddonFile();
+
+                    if (!folder.Exists)
+                    {
+                        Console.Error.WriteLine("ERROR: Input folder needs to exist and needs to contain appropriate data.");
+                        return;
+                    }
 
                     // recursively add files
                     foreach (var file in folder.EnumerateFiles("*", SearchOption.AllDirectories))
@@ -36,13 +48,41 @@ namespace GarrysMod.AddonCreator
                 }
                 case "extract":
                 {
+                    if (args.Length < 3)
+                    {
+                        goto default;
+                    }
+
                     var gma = args[1];
                     var folder = new DirectoryInfo(args[2]);
-                    var addon = new AddonFile();
-                    addon.Import(gma);
 
-                    Console.WriteLine("Loaded addon {0} by {1}, Version {2}", addon.Title, addon.Author, addon.Version);
-                    Console.WriteLine("\t{0}", addon.Description);
+                    if (!File.Exists(gma))
+                    {
+                        Console.Error.WriteLine("ERROR: Input GMA file needs to exist.");
+                        return;
+                    }
+
+                    var addon = new AddonFile();
+                    try
+                    {
+                        addon.Import(gma);
+                    }
+                    catch(Exception err)
+                    {
+                        Console.Error.WriteLine("ERROR: Input GMA file could not be read - {0}", err.Message);
+#if DEBUG
+                        Debugger.Break();
+#endif
+                        return;
+                    }
+
+                    Console.WriteLine("## Addon information ##");
+                    Console.WriteLine(addon.Title);
+                    Console.WriteLine("\tVersion {0}", addon.Version);
+                    Console.WriteLine("\tby {0}", addon.Author);
+                    Console.WriteLine();
+                    Console.WriteLine(addon.Description);
+                    Console.WriteLine();
 
                     // extract files
                     foreach (var file in addon.Files)
@@ -81,6 +121,16 @@ namespace GarrysMod.AddonCreator
                     Console.WriteLine("Done.");
                     break;
                 }
+                default:
+                    Console.WriteLine("Usage: {0} <command> <arguments>", Process.GetCurrentProcess().ProcessName);
+                    Console.WriteLine();
+                    Console.WriteLine("Commands:");
+                    Console.WriteLine("\t{0}\t{1}", "extract", "Extracts a GMA file and shows information about it.");
+                    Console.WriteLine("\t\tArguments: Input GMA file path, output folder path");
+                    Console.WriteLine("\t{0}\t{1}", "create", "Creates a GMA file.");
+                    Console.WriteLine("\t\tArguments: Input folder path, output GMA file path");
+                    Console.WriteLine();
+                    break;
             }
         }
 
