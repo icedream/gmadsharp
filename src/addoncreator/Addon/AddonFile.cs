@@ -291,11 +291,13 @@ namespace GarrysMod.AddonCreator.Addon
                 sw.Write(Version);
 
                 // File list
+#if SUPPORT_BIG
                 if (Files.Count > uint.MaxValue)
                 {
                     throw new IndexOutOfRangeException("Number of addon files must not exceed " + uint.MaxValue +
                                                        " elements.");
                 }
+#endif
                 uint fileNum = 0;
                 foreach (var file in resultingFiles)
                 {
