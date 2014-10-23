@@ -38,7 +38,7 @@ namespace GarrysMod.AddonCreator
             }
 
             value += "\0";
-            bw.Write(Encoding.GetEncoding("windows-1252").GetBytes(value));
+            bw.Write(Encoding.GetEncoding("iso-8859-1").GetBytes(value));
         }
     }
 }

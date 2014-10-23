@@ -81,7 +81,7 @@ namespace GarrysMod.AddonCreator.Addon
             var stream = File.OpenRead(path);
 
             {
-                var sr = new BinaryReader(stream, Encoding.GetEncoding("windows-1252"));
+                var sr = new BinaryReader(stream, Encoding.GetEncoding("iso-8859-1"));
 
                 // Check format header
                 if (!sr.ReadBytes(4).SequenceEqual(FormatIdent)
@@ -260,7 +260,7 @@ namespace GarrysMod.AddonCreator.Addon
             using (var stream = new MemoryStream())
             {
                 // TODO: Standardized encoding - Garry should use standardized encoding, currently he uses Encoding.Default which is applocale-dependent...
-                var sw = new BinaryWriter(stream, Encoding.GetEncoding("windows-1252"));
+                var sw = new BinaryWriter(stream, Encoding.GetEncoding("iso-8859-1"));
 
                 // Format header
                 sw.Write(FormatIdent);
