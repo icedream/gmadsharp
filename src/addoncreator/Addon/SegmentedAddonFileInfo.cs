@@ -18,6 +18,19 @@ namespace GarrysMod.AddonCreator.Addon
             _hash = fileHash;
         }
 
+        public override long Size
+        {
+            get
+            {
+                return _len;
+            }
+        }
+
+        public override int Crc32Hash
+        {
+            get { return _hash; }
+        }
+
         public override byte[] GetContents()
         {
             lock (_stream)
