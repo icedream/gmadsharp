@@ -103,7 +103,7 @@ namespace GarrysMod.AddonCreator
                         // extract files
                         foreach (var file in addon.Files)
                         {
-                            var relpath = file.Key;
+                            var relpath = file.Key.Replace(Path.DirectorySeparatorChar, '/');
                             var targetFile =
                                 new FileInfo(Path.Combine(folder.FullName,
                                     relpath.Replace('/', Path.DirectorySeparatorChar)));
@@ -112,8 +112,8 @@ namespace GarrysMod.AddonCreator
 
                             // create directory
                             var dir = targetFile.Directory;
-                            if (dir == null)
-                                continue; // I still need to think about the weird logic here
+                            if (dir == null || relpath.Contains("../"))
+                                continue; // relative path trying to be sneaky here
                             dir.Create();
 
                             // create file
