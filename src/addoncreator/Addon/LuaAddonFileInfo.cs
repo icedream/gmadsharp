@@ -42,6 +42,7 @@ namespace GarrysMod.AddonCreator.Addon
             _luaCode = Encoding.UTF8.GetString(_fi.GetContents());
             _luaCode = Regex.Replace(_luaCode, _stripCommentsRegex, m => m.Groups["linebreak"] != null ? m.Groups["linebreak"].Value : "");
 
+            _content = Encoding.UTF8.GetBytes(_luaCode);
 
             return _content;
         }
