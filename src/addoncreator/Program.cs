@@ -25,7 +25,8 @@ namespace GarrysMod.AddonCreator
 
                     if (!folder.Exists)
                     {
-                        Console.Error.WriteLine("ERROR: Input folder needs to exist and needs to contain appropriate data.");
+                        Console.Error.WriteLine(
+                            "ERROR: Input folder needs to exist and needs to contain appropriate data.");
                         return;
                     }
 
@@ -67,7 +68,7 @@ namespace GarrysMod.AddonCreator
                     {
                         addon.Import(gma);
                     }
-                    catch(Exception err)
+                    catch (Exception err)
                     {
                         Console.Error.WriteLine("ERROR: Input GMA file could not be read - {0}", err.Message);
 #if DEBUG

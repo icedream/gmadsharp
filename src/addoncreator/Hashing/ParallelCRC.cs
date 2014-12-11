@@ -25,13 +25,13 @@ namespace GarrysMod.AddonCreator.Hashing
                 for (i = 0; i < 256; i++)
                 {
                     var r = (uint) i;
-                    for (int j = 0; j < 8; j++)
+                    for (var j = 0; j < 8; j++)
                         r = (r >> 1) ^ (kCrcPoly & ~((r & 1) - 1));
                     Table[i] = r;
                 }
                 for (; i < 256*CRC_NUM_TABLES; i++)
                 {
-                    uint r = Table[i - 256];
+                    var r = Table[i - 256];
                     Table[i] = Table[r & 0xFF] ^ (r >> 8);
                 }
             }
@@ -72,9 +72,9 @@ namespace GarrysMod.AddonCreator.Hashing
 
             // choose optimal number of threads to use
 
-            int threadCount = ThreadCount;
+            var threadCount = ThreadCount;
             L0:
-            int bytesPerThread = (count + threadCount - 1)/threadCount;
+            var bytesPerThread = (count + threadCount - 1)/threadCount;
             if (bytesPerThread < ThreadCost >> 1)
             {
                 threadCount--;
@@ -115,7 +115,7 @@ namespace GarrysMod.AddonCreator.Hashing
 
             if (count >= 8)
             {
-                int to = (count - 8) & ~7;
+                var to = (count - 8) & ~7;
                 count -= to;
                 to += offset;
 
@@ -188,8 +188,8 @@ namespace GarrysMod.AddonCreator.Hashing
                 Prepare_even_odd_Cache();
             }
 
-            uint[] even = CopyArray(even_cache);
-            uint[] odd = CopyArray(odd_cache);
+            var even = CopyArray(even_cache);
+            var odd = CopyArray(odd_cache);
 
             crc1 = ~crc1;
             crc2 = ~crc2;
@@ -225,7 +225,7 @@ namespace GarrysMod.AddonCreator.Hashing
 
             // put operator for one zero bit in odd
             odd[0] = kCrcPoly; // the CRC-32 polynomial
-            for (int i = 1; i < 32; i++) odd[i] = 1U << (i - 1);
+            for (var i = 1; i < 32; i++) odd[i] = 1U << (i - 1);
 
             // put operator for two zero bits in even
             gf2_matrix_square(even, odd);
@@ -241,7 +241,7 @@ namespace GarrysMod.AddonCreator.Hashing
         private static uint gf2_matrix_times(uint[] matrix, uint vec)
         {
             uint sum = 0;
-            int i = 0;
+            var i = 0;
             while (vec != 0)
             {
                 if ((vec & 1) != 0) sum ^= matrix[i];
@@ -255,7 +255,7 @@ namespace GarrysMod.AddonCreator.Hashing
         /// <param name="mat">will not be modified</param>
         private static void gf2_matrix_square(uint[] square, uint[] mat)
         {
-            for (int i = 0; i < 32; i++)
+            for (var i = 0; i < 32; i++)
                 square[i] = gf2_matrix_times(mat, mat[i]);
         }
 

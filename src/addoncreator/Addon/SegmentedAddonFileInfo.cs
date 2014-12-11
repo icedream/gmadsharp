@@ -5,10 +5,10 @@ namespace GarrysMod.AddonCreator.Addon
 {
     public class SegmentedAddonFileInfo : AddonFileInfo
     {
+        private readonly int _hash;
         private readonly long _len;
         private readonly long _pos;
         private readonly Stream _stream;
-        private int _hash;
 
         public SegmentedAddonFileInfo(Stream stream, long pos, long len, int fileHash)
         {
@@ -20,10 +20,7 @@ namespace GarrysMod.AddonCreator.Addon
 
         public override long Size
         {
-            get
-            {
-                return _len;
-            }
+            get { return _len; }
         }
 
         public override int Crc32Hash

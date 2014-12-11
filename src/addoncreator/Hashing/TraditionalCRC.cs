@@ -17,8 +17,8 @@ namespace GarrysMod.AddonCreator.Hashing
                 Table = new uint[256];
                 for (uint i = 0; i < 256; i++)
                 {
-                    uint r = i;
-                    for (int j = 0; j < 8; j++)
+                    var r = i;
+                    for (var j = 0; j < 8; j++)
                         r = (r >> 1) ^ (kCrcPoly & ~((r & 1) - 1));
                     Table[i] = r;
                 }

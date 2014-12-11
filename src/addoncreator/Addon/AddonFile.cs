@@ -67,10 +67,6 @@ namespace GarrysMod.AddonCreator.Addon
         /// </summary>
         public List<string> RequiredContent { get; private set; }
 
-        public static void CreateFromFolder()
-        {
-        }
-
         /// <summary>
         ///     Imports a gmod addon into this instance.
         /// </summary>
