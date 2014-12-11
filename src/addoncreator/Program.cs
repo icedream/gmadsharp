@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using GarrysMod.AddonCreator.Addon;
 
 namespace GarrysMod.AddonCreator
@@ -17,6 +18,10 @@ namespace GarrysMod.AddonCreator
             {
                 switch (args.Length == 0 ? "" : args[0])
                 {
+                    case "--version":
+                        Console.WriteLine("{0} v{1}", Assembly.GetExecutingAssembly().GetName().Name, Assembly.GetExecutingAssembly().GetName().Version);
+                        args = args.Skip(1).ToArray();
+                        break;
                     case "--minimize-lua":
                         minimizeLua = true;
                         args = args.Skip(1).ToArray();
