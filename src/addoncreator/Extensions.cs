@@ -6,6 +6,11 @@ namespace GarrysMod.AddonCreator
 {
     internal static class Extensions
     {
+        /// <summary>
+        /// Generates a regular expression from a wildcard.
+        /// </summary>
+        /// <param name="pattern">The wildcard pattern</param>
+        /// <returns>A regular expression of the given pattern</returns>
         public static Regex WildcardRegex(this string pattern)
         {
             return new Regex("^" + Regex.Escape(pattern)
@@ -14,6 +19,12 @@ namespace GarrysMod.AddonCreator
                              + "$");
         }
 
+        /// <summary>
+        /// Reads a string. If nullTerminated is true, this will not use native string reading but reads until a NULL char is found. 
+        /// </summary>
+        /// <param name="br">The binary reader instance</param>
+        /// <param name="nullTerminated">Use null-terminated reading instead of native string reading</param>
+        /// <returns>The read string</returns>
         public static string ReadString(this BinaryReader br, bool nullTerminated)
         {
             if (!nullTerminated)
@@ -30,6 +41,12 @@ namespace GarrysMod.AddonCreator
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Writes a string. If nullTerminated is true, the string will not be written using native string writing but without length prefix and with NULL char termination instead.
+        /// </summary>
+        /// <param name="bw">The binary writer instance</param>
+        /// <param name="value">The string to write</param>
+        /// <param name="nullTerminated">Use null-terminated writing instead of native string writing</param>
         public static void Write(this BinaryWriter bw, string value, bool nullTerminated)
         {
             if (!nullTerminated)

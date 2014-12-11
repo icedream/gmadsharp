@@ -4,8 +4,14 @@ using System.Text.RegularExpressions;
 
 namespace GarrysMod.AddonCreator.Addon
 {
+    /// <summary>
+    /// Handles file whitelisting.
+    /// </summary>
     public static class AddonWhitelist
     {
+        /// <summary>
+        /// Contains all allowed file patterns.
+        /// </summary>
         private static readonly string[] Whitelist =
         {
             "addon.json",
@@ -77,6 +83,11 @@ namespace GarrysMod.AddonCreator.Addon
             _regularExpressions = Whitelist.Select(w => w.WildcardRegex()).ToArray();
         }
 
+        /// <summary>
+        /// Scans a list of file paths for files which are not whitelisted and returns the found file paths.
+        /// </summary>
+        /// <param name="files">The list of file paths to scan</param>
+        /// <returns>Found files which are not whitelisted</returns>
         public static IEnumerable<string> FindBlacklistedFiles(IEnumerable<string> files)
         {
             ConvertWhitelist();
