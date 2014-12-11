@@ -20,8 +20,8 @@ namespace GarrysMod.AddonCreator.Addon
         private readonly string _stripCommentsRegex = string.Join("|", new[]
         {
             // block comments
-            @"\/\*.*\*\/",
-            @"\-\-\[\[.*\]\]",
+            @"\/\*.*?\*\/",
+            @"\-\-\[\[.*?\]\]",
 
             // line comments
             @"//([^\r\n]*?)(?<linebreak>[\r\n]+)",
