@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using GarrysMod.AddonCreator.Hashing;
 using Newtonsoft.Json;
+using TagLib;
+using File = System.IO.File;
 
 namespace GarrysMod.AddonCreator.Addon
 {
@@ -24,6 +27,7 @@ namespace GarrysMod.AddonCreator.Addon
             Files = new Dictionary<string, AddonFileInfo>();
             RequiredContent = new List<string>();
             Version = 1;
+            MinimizeMedia = true;
         }
 
         /// <summary>
@@ -68,6 +72,16 @@ namespace GarrysMod.AddonCreator.Addon
         public List<string> RequiredContent { get; private set; }
 
         /// <summary>
+        ///     Indicates whether Lua files will have comments and unnecessary whitespace stripped out on export.
+        /// </summary>
+        public bool MinimizeLua { get; set; }
+
+        /// <summary>
+        ///     Indicates whether media files will have all game-irrelevant information (like ID3 tags) stripped out on export.
+        /// </summary>
+        public bool MinimizeMedia { get; set; }
+
+        /// <summary>
         ///     Imports a gmod addon into this instance.
         /// </summary>
         /// <param name="path">Path to a gmod addon file.</param>
@@ -85,8 +99,8 @@ namespace GarrysMod.AddonCreator.Addon
                     throw new FormatException();
 
 #if DEBUG
-                // Check addon's CRC32 hash
-                // TODO: Garry's code actually calculates CRC32 hashes differently in edge cases. The code used for it is from zlib-1.1.3. See https://github.com/garrynewman/bootil/blob/master/src/3rdParty/smhasher/crc.cpp#L4.
+    // Check addon's CRC32 hash
+    // TODO: Garry's code actually calculates CRC32 hashes differently in edge cases. The code used for it is from zlib-1.1.3. See https://github.com/garrynewman/bootil/blob/master/src/3rdParty/smhasher/crc.cpp#L4.
                 {
                     Debug.WriteLine("Checking CRC32...");
                     var baseAddon = new byte[stream.Length - sizeof (int)];
@@ -153,7 +167,7 @@ namespace GarrysMod.AddonCreator.Addon
                     var fileSize = sr.ReadInt64();
                     var fileHash = sr.ReadInt32();
 
-                    Debug.WriteLine("\t#{2} : {0} ({1:0.0} kB)", filePath, (double)fileSize/1024, fileId);
+                    Debug.WriteLine("\t#{2} : {0} ({1:0.0} kB)", filePath, (double) fileSize/1024, fileId);
                     Debug.Assert(fileId == expectedFileId);
 
                     expectedFileId++;
@@ -177,7 +191,7 @@ namespace GarrysMod.AddonCreator.Addon
                     var fileHash = file.Value.Item2;
                     var filePosition = sr.BaseStream.Position;
 
-                    Debug.WriteLine("Analyzing: {0} ({1:0.00} kB)", filePath, (double)fileSize / 1024);
+                    Debug.WriteLine("Analyzing: {0} ({1:0.00} kB)", filePath, (double) fileSize/1024);
 
                     var fileContent = new byte[fileSize];
 
@@ -226,11 +240,25 @@ namespace GarrysMod.AddonCreator.Addon
 
             if (MinimizeLua)
                 files = files
-                    // minimize lua code
                     .Select(f => f.Key.EndsWith(".lua", StringComparison.OrdinalIgnoreCase)
                         ? new KeyValuePair<string, AddonFileInfo>(f.Key, new MinifiedLuaAddonFileInfo(f.Value))
                         : f)
                     .ToDictionary(i => i.Key, i => i.Value);
+
+            files = files
+                .Select(f => Assembly.LoadFrom("taglib-sharp.dll")
+                    .GetTypes()
+                    .Where(t => t.IsSubclassOf(typeof (TagLib.File)))
+                    .Any(mediaSupport => mediaSupport.GetCustomAttributes(typeof (SupportedMimeType), false)
+                        .Select(t => t as SupportedMimeType)
+                        .Any(mediaSupportExt => mediaSupportExt.Extension != null
+                                                && f.Key.ToLower().EndsWith("." +
+                                                                            (mediaSupportExt.Extension.TrimStart('.')
+                                                                                .ToLower()))))
+                    ? new KeyValuePair<string, AddonFileInfo>(f.Key,
+                        new MinifiedMediaAddonFileInfo(f.Value, f.Key.Split('.').Last()) {StripTags = MinimizeMedia})
+                    : f)
+                .ToDictionary(i => i.Key, i => i.Value);
 
             // Check for errors and ignores in addon.json
             var addonJson =
@@ -311,7 +339,8 @@ namespace GarrysMod.AddonCreator.Addon
                 uint fileNum = 0;
                 foreach (var file in resultingFiles)
                 {
-                    Console.WriteLine("Processing: {0} ({1:0.00} kB)", file.Key, (double)file.Value.Size / 1024);
+                    Console.Write("Processing: {0}", file.Key);
+                    Console.WriteLine(" ({0:0.00} kB)", (double) file.Value.Size/1024);
 
                     fileNum++;
                     sw.Write(fileNum);
@@ -322,14 +351,41 @@ namespace GarrysMod.AddonCreator.Addon
                 sw.Write((uint) 0); // End of file list
 
                 // File contents
-                foreach (var file in resultingFiles)
+                foreach (var file in resultingFiles
+                    .Where(file => file.Value.Size != 0))
                 {
-                    if (file.Value.Size == 0)
-                        continue;
-
+#if DEBUG
+                    Console.WriteLine("Packing: {0} ({1})", file.Key,
+                        file.Value.GetType().Name.Replace("AddonFileInfo", ""));
+#else
                     Console.WriteLine("Packing: {0}", file.Key);
+#endif
 
-                    sw.Write(file.Value.GetContents());
+                    byte[] contents;
+                    try
+                    {
+                        contents = file.Value.GetContents();
+                    }
+                    catch (CorruptFileException e)
+                    {
+                        var mediaFile = file.Value as MinifiedMediaAddonFileInfo;
+                        if (mediaFile == null)
+                        {
+                            throw new Exception(); // what the fuck logic
+                        }
+
+                        var oldColor = Console.ForegroundColor;
+                        Console.ForegroundColor = ConsoleColor.Red;
+
+                        Console.Error.WriteLine("Warning: File {0} possibly corrupted - {1}", file.Key, e.Message);
+
+                        Console.ForegroundColor = oldColor;
+
+                        mediaFile.IgnoreCorrupted = true;
+                        contents = mediaFile.GetContents();
+                    }
+
+                    sw.Write(contents);
                 }
 
                 // Addon CRC
@@ -343,10 +399,5 @@ namespace GarrysMod.AddonCreator.Addon
                 }
             }
         }
-
-        /// <summary>
-        /// Indicates whether Lua files will have comments and unnecessary whitespace stripped out on export.
-        /// </summary>
-        public bool MinimizeLua { get; set; }
     }
 }

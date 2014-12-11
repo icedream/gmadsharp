@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using GarrysMod.AddonCreator.Addon;
 
 namespace GarrysMod.AddonCreator
@@ -12,6 +11,7 @@ namespace GarrysMod.AddonCreator
         private static void Main(string[] args)
         {
             var minimizeLua = false;
+            var minimizeMedia = true;
 
             while (args.Any())
             {
@@ -25,6 +25,14 @@ namespace GarrysMod.AddonCreator
                         minimizeLua = false;
                         args = args.Skip(1).ToArray();
                         break;
+                    case "--minimize-media":
+                        minimizeMedia = true;
+                        args = args.Skip(1).ToArray();
+                        break;
+                    case "--no-minimize-media":
+                        minimizeMedia = false;
+                        args = args.Skip(1).ToArray();
+                        break;
                     case "create":
                     {
                         if (args.Length < 3)
@@ -34,7 +42,7 @@ namespace GarrysMod.AddonCreator
 
                         var folder = new DirectoryInfo(args[1]);
                         var output = args[2];
-                        var addon = new AddonFile {MinimizeLua = minimizeLua};
+                        var addon = new AddonFile {MinimizeLua = minimizeLua, MinimizeMedia = minimizeMedia};
 
                         if (!folder.Exists)
                         {
@@ -143,7 +151,8 @@ namespace GarrysMod.AddonCreator
                     }
 
                     default:
-                        Console.WriteLine("Usage: {0} <options> <command> <arguments>", Process.GetCurrentProcess().ProcessName);
+                        Console.WriteLine("Usage: {0} <options> <command> <arguments>",
+                            Process.GetCurrentProcess().ProcessName);
                         Console.WriteLine();
                         Console.WriteLine("Commands:");
                         Console.WriteLine("\t{0}\t{1}", "extract", "Extracts a GMA file and shows information about it.");
@@ -152,8 +161,14 @@ namespace GarrysMod.AddonCreator
                         Console.WriteLine("\t\tArguments: Input folder path, output GMA file path");
                         Console.WriteLine();
                         Console.WriteLine("Options:");
-                        Console.WriteLine("\t{0}\t{1}", "--minimize-lua", "Causes exported GMAs to have all Lua comments and unneeded whitespace in Lua stripped out.");
-                        Console.WriteLine("\t{0}\t{1}", "--no-minimize-lua", "(default) Will prevent Lua files getting minimized.");
+                        Console.WriteLine("\t{0}\t{1}", "--minimize-lua",
+                            "Causes exported GMAs to have all Lua comments and unneeded whitespace in Lua stripped out.");
+                        Console.WriteLine("\t{0}\t{1}", "--no-minimize-lua",
+                            "(default) Will prevent Lua files getting minimized.");
+                        Console.WriteLine("\t{0}\t{1}", "--minimize-media",
+                            "(default) Causes exported GMAs to have all media tags stripped out.");
+                        Console.WriteLine("\t{0}\t{1}", "--no-minimize-media",
+                            "Will prevent media files getting minimized.");
                         Console.WriteLine();
                         return;
                 }
