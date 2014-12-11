@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace GarrysMod.AddonCreator.Hashing
 {
-    public class ParallelCRC
+    public class Crc32
     {
         private const uint kCrcPoly = 0xEDB88320;
         private const uint kInitial = 0xFFFFFFFF;
@@ -16,7 +16,7 @@ namespace GarrysMod.AddonCreator.Hashing
 
         private uint value;
 
-        static ParallelCRC()
+        static Crc32()
         {
             unchecked
             {
@@ -37,7 +37,7 @@ namespace GarrysMod.AddonCreator.Hashing
             }
         }
 
-        public ParallelCRC()
+        public Crc32()
         {
             Init();
         }
@@ -150,7 +150,7 @@ namespace GarrysMod.AddonCreator.Hashing
 
         public static int Compute(byte[] data, int offset, int count)
         {
-            var crc = new ParallelCRC();
+            var crc = new Crc32();
             crc.Update(data, offset, count);
             return crc.Value;
         }
@@ -270,13 +270,13 @@ namespace GarrysMod.AddonCreator.Hashing
 
         private class Job
         {
-            private readonly ParallelCRC accumulator;
+            private readonly Crc32 accumulator;
             private readonly Job waitForJob;
             private ArraySegment<byte> data;
 
             private ManualResetEventSlim finished;
 
-            public Job(ArraySegment<byte> data, ParallelCRC accumulator, Job waitForJob)
+            public Job(ArraySegment<byte> data, Crc32 accumulator, Job waitForJob)
             {
                 this.data = data;
                 this.accumulator = accumulator;
@@ -298,7 +298,7 @@ namespace GarrysMod.AddonCreator.Hashing
                 Dispose();
             }
 
-            public void Dispose()
+            private void Dispose()
             {
                 if (finished != null) finished.Dispose();
                 finished = null;

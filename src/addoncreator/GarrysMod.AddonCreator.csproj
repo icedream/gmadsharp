@@ -55,13 +55,11 @@
     <Compile Include="Addon\AddonWhitelist.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Addon\JsonAddonFileInfo.cs" />
-    <Compile Include="Hashing\OptimizedCRC.cs" />
-    <Compile Include="Hashing\ParallelCRC.cs" />
+    <Compile Include="Hashing\Crc32.cs" />
     <Compile Include="Addon\PhysicalAddonFileInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Addon\SegmentedAddonFileInfo.cs" />
-    <Compile Include="Hashing\TraditionalCRC.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

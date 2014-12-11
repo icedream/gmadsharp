@@ -94,7 +94,7 @@ namespace GarrysMod.AddonCreator.Addon
                     stream.Position = 0;
                     stream.Read(baseAddon, 0, baseAddon.Length);
                     var baseAddonHash = sr.ReadInt32();
-                    var calcAddonHash = ParallelCRC.Compute(baseAddon);
+                    var calcAddonHash = Crc32.Compute(baseAddon);
                     Debug.WriteLine("\tCalculated hash: {0}; Wanted hash: {1}", calcAddonHash, baseAddonHash);
                     Debug.Assert(calcAddonHash == baseAddonHash, "CRC32 hash mismatch",
                         "Calculated CRC32 hash is different from the one saved within the addon. Causes could be a corrupted file or the edge case bug https://github.com/icedream/gmadsharp/issues/2.");
@@ -189,7 +189,7 @@ namespace GarrysMod.AddonCreator.Addon
                     }
 
                     // CRC check for this file
-                    var fileCalcHash = ParallelCRC.Compute(fileContent);
+                    var fileCalcHash = Crc32.Compute(fileContent);
                     Debug.WriteLine("\t\tCalculated hash: {0}; Wanted hash: {1}", fileCalcHash, fileHash);
                     if (fileCalcHash != fileHash)
                     {
@@ -320,7 +320,7 @@ namespace GarrysMod.AddonCreator.Addon
                 }
 
                 // Addon CRC
-                var addonHash = ParallelCRC.Compute(stream.ToArray());
+                var addonHash = Crc32.Compute(stream.ToArray());
                 sw.Write(addonHash);
 
                 using (var outfile = File.Create(path))

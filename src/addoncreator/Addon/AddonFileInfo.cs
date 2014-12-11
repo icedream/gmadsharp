@@ -20,7 +20,7 @@ namespace GarrysMod.AddonCreator.Addon
         /// </summary>
         public virtual int Crc32Hash
         {
-            get { return _hash.HasValue ? _hash.Value : (_hash = ParallelCRC.Compute(GetContents())).Value; }
+            get { return _hash.HasValue ? _hash.Value : (_hash = Crc32.Compute(GetContents())).Value; }
         }
 
         /// <summary>
