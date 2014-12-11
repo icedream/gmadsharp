@@ -153,7 +153,7 @@ namespace GarrysMod.AddonCreator.Addon
                     var fileSize = sr.ReadInt64();
                     var fileHash = sr.ReadInt32();
 
-                    Debug.WriteLine("\t#{2} : {0} ({1:0.0} kB)", filePath, fileSize/1024, fileId);
+                    Debug.WriteLine("\t#{2} : {0} ({1:0.0} kB)", filePath, (double)fileSize/1024, fileId);
                     Debug.Assert(fileId == expectedFileId);
 
                     expectedFileId++;
@@ -177,7 +177,7 @@ namespace GarrysMod.AddonCreator.Addon
                     var fileHash = file.Value.Item2;
                     var filePosition = sr.BaseStream.Position;
 
-                    Debug.WriteLine("Extracting: {0} ({1:0.00} kB)", filePath, fileSize/1024);
+                    Debug.WriteLine("Analyzing: {0} ({1:0.00} kB)", filePath, (double)fileSize / 1024);
 
                     var fileContent = new byte[fileSize];
 
@@ -302,6 +302,8 @@ namespace GarrysMod.AddonCreator.Addon
                 uint fileNum = 0;
                 foreach (var file in resultingFiles)
                 {
+                    Console.WriteLine("Processing: {0} ({1:0.00} kB)", file.Key, (double)file.Value.Size / 1024);
+
                     fileNum++;
                     sw.Write(fileNum);
                     sw.Write(file.Key.ToLower(), true); // Path
@@ -315,6 +317,8 @@ namespace GarrysMod.AddonCreator.Addon
                 {
                     if (file.Value.Size == 0)
                         continue;
+
+                    Console.WriteLine("Packing: {0}", file.Key);
 
                     sw.Write(file.Value.GetContents());
                 }
