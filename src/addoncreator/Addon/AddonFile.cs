@@ -176,6 +176,7 @@ namespace GarrysMod.AddonCreator.Addon
                     var filePath = file.Key;
                     var fileSize = file.Value.Item1;
                     var fileHash = file.Value.Item2;
+                    var filePosition = sr.BaseStream.Position;
 
                     Debug.WriteLine("Extracting: {0} ({1:0.00} kB)", filePath, fileSize/1024);
 
@@ -195,7 +196,7 @@ namespace GarrysMod.AddonCreator.Addon
                         throw new IOException("File " + filePath + " in addon file is corrupted (hash mismatch)");
                     }
 
-                    Files.Add(filePath, new SegmentedAddonFileInfo(stream, sr.BaseStream.Position, fileSize, fileHash));
+                    Files.Add(filePath, new SegmentedAddonFileInfo(stream, filePosition, fileSize, fileHash));
                 }
             }
         }
