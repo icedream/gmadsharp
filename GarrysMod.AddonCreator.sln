@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{45F8AB
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLua", "external\sharplua-mod\SharpLua\SharpLua.csproj", "{90A9C907-11AD-4754-8B70-51CCB3A6C98A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{E33D031D-7866-40F9-9362-2776CB4A7B5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E33D031D-7866-40F9-9362-2776CB4A7B5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E33D031D-7866-40F9-9362-2776CB4A7B5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90A9C907-11AD-4754-8B70-51CCB3A6C98A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90A9C907-11AD-4754-8B70-51CCB3A6C98A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90A9C907-11AD-4754-8B70-51CCB3A6C98A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90A9C907-11AD-4754-8B70-51CCB3A6C98A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

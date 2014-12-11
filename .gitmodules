@@ -1,0 +1,4 @@
+[submodule "external/sharplua-mod"]
+	path = external/sharplua-mod
+	url = git://github.com/icedream/SharpLua.git
+	branch = master

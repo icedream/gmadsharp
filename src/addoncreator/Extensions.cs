@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -39,6 +40,11 @@ namespace GarrysMod.AddonCreator
                 sb.Append(c);
             } while (true);
             return sb.ToString();
+        }
+
+        public static string EscapeShellArgument(this String s)
+        {
+            return "\"" + Regex.Replace(s, @"(\\+)$", @"$1$1") + "\"";
         }
 
         /// <summary>
