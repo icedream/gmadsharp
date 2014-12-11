@@ -222,7 +222,12 @@ namespace GarrysMod.AddonCreator.Addon
                 throw new FileNotFoundException("Addon building requires a valid addon.json file.");
             }
 
-            var files = Files;
+            var files = Files
+                // minimize lua code
+                .Select(f => f.Key.EndsWith(".lua", StringComparison.OrdinalIgnoreCase)
+                    ? new KeyValuePair<string, AddonFileInfo>(f.Key, new LuaAddonFileInfo(f.Value))
+                    : f)
+                .ToDictionary(i => i.Key, i => i.Value);
 
             // Check for errors and ignores in addon.json
             var addonJson =
