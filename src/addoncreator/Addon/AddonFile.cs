@@ -88,7 +88,9 @@ namespace GarrysMod.AddonCreator.Addon
                     || sr.ReadByte() != FormatVersion)
                     throw new FormatException();
 
+#if DEBUG
                 // Check addon's CRC32 hash
+                // TODO: Garry's code actually calculates CRC32 hashes differently in edge cases. The code used for it is from zlib-1.1.3. See https://github.com/garrynewman/bootil/blob/master/src/3rdParty/smhasher/crc.cpp#L4.
                 {
                     Debug.WriteLine("Checking CRC32...");
                     var baseAddon = new byte[stream.Length - sizeof (int)];
@@ -96,12 +98,13 @@ namespace GarrysMod.AddonCreator.Addon
                     stream.Position = 0;
                     stream.Read(baseAddon, 0, baseAddon.Length);
                     var baseAddonHash = sr.ReadInt32();
-                    if (ParallelCRC.Compute(baseAddon) != baseAddonHash)
-                    {
-                        throw new IOException("Data corrupted (calculated hash mismatching hash in addon file)");
-                    }
+                    var calcAddonHash = ParallelCRC.Compute(baseAddon);
+                    Debug.WriteLine("\tCalculated hash: {0}; Wanted hash: {1}", calcAddonHash, baseAddonHash);
+                    Debug.Assert(calcAddonHash == baseAddonHash, "CRC32 hash mismatch",
+                        "Calculated CRC32 hash is different from the one saved within the addon. Causes could be a corrupted file or the edge case bug https://github.com/icedream/gmadsharp/issues/2.");
                     stream.Position = oldpos;
                 }
+#endif
 
                 // Import metadata
                 var newSteamID = sr.ReadUInt64();
@@ -191,6 +194,7 @@ namespace GarrysMod.AddonCreator.Addon
 
                     // CRC check for this file
                     var fileCalcHash = ParallelCRC.Compute(fileContent);
+                    Debug.WriteLine("\t\tCalculated hash: {0}; Wanted hash: {1}", fileCalcHash, fileHash);
                     if (fileCalcHash != fileHash)
                     {
                         throw new IOException("File " + filePath + " in addon file is corrupted (hash mismatch)");
