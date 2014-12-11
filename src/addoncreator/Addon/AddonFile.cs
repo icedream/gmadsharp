@@ -184,8 +184,9 @@ namespace GarrysMod.AddonCreator.Addon
                     // long-compatible file reading
                     for (long i = 0; i < fileSize; i += int.MaxValue)
                     {
-                        var tempContent = sr.ReadBytes((int) Math.Min(int.MaxValue, fileSize));
-                        tempContent.CopyTo(fileContent, i);
+                        sr
+                            .ReadBytes((int) Math.Min(int.MaxValue, fileSize))
+                            .CopyTo(fileContent, i);
                     }
 
                     // CRC check for this file

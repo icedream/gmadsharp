@@ -12,7 +12,7 @@ namespace GarrysMod.AddonCreator.Addon
         /// </summary>
         public virtual long Size
         {
-            get { return _size.HasValue ? _size.Value : (_size = GetContents().Length).Value; }
+            get { lock(this) return _size.HasValue ? _size.Value : (_size = GetContents().Length).Value; }
         }
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace GarrysMod.AddonCreator.Addon
         /// </summary>
         public virtual int Crc32Hash
         {
-            get { return _hash.HasValue ? _hash.Value : (_hash = Crc32.Compute(GetContents())).Value; }
+            get { lock (this) return _hash.HasValue ? _hash.Value : (_hash = Crc32.Compute(GetContents())).Value; }
         }
 
         /// <summary>
