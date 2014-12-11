@@ -56,7 +56,7 @@
     <Compile Include="Addon\AddonFileInfo.cs" />
     <Compile Include="Addon\AddonJson.cs" />
     <Compile Include="Addon\AddonWhitelist.cs" />
-    <Compile Include="Addon\LuaAddonFileInfo.cs" />
+    <Compile Include="Addon\MinifiedLuaAddonFileInfo.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Addon\JsonAddonFileInfo.cs" />
     <Compile Include="Hashing\Crc32.cs" />

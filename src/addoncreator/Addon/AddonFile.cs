@@ -222,12 +222,15 @@ namespace GarrysMod.AddonCreator.Addon
                 throw new FileNotFoundException("Addon building requires a valid addon.json file.");
             }
 
-            var files = Files
-                // minimize lua code
-                .Select(f => f.Key.EndsWith(".lua", StringComparison.OrdinalIgnoreCase)
-                    ? new KeyValuePair<string, AddonFileInfo>(f.Key, new LuaAddonFileInfo(f.Value))
-                    : f)
-                .ToDictionary(i => i.Key, i => i.Value);
+            var files = Files.ToDictionary(i => i.Key, i => i.Value);
+
+            if (MinimizeLua)
+                files = files
+                    // minimize lua code
+                    .Select(f => f.Key.EndsWith(".lua", StringComparison.OrdinalIgnoreCase)
+                        ? new KeyValuePair<string, AddonFileInfo>(f.Key, new MinifiedLuaAddonFileInfo(f.Value))
+                        : f)
+                    .ToDictionary(i => i.Key, i => i.Value);
 
             // Check for errors and ignores in addon.json
             var addonJson =
@@ -340,5 +343,10 @@ namespace GarrysMod.AddonCreator.Addon
                 }
             }
         }
+
+        /// <summary>
+        /// Indicates whether Lua files will have comments and unnecessary whitespace stripped out on export.
+        /// </summary>
+        public bool MinimizeLua { get; set; }
     }
 }

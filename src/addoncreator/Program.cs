@@ -11,10 +11,20 @@ namespace GarrysMod.AddonCreator
     {
         private static void Main(string[] args)
         {
+            var minimizeLua = false;
+
             while (args.Any())
             {
                 switch (args.Length == 0 ? "" : args[0])
                 {
+                    case "--minimize-lua":
+                        minimizeLua = true;
+                        args = args.Skip(1).ToArray();
+                        break;
+                    case "--no-minimize-lua":
+                        minimizeLua = false;
+                        args = args.Skip(1).ToArray();
+                        break;
                     case "create":
                     {
                         if (args.Length < 3)
@@ -24,7 +34,7 @@ namespace GarrysMod.AddonCreator
 
                         var folder = new DirectoryInfo(args[1]);
                         var output = args[2];
-                        var addon = new AddonFile();
+                        var addon = new AddonFile {MinimizeLua = minimizeLua};
 
                         if (!folder.Exists)
                         {
@@ -133,13 +143,17 @@ namespace GarrysMod.AddonCreator
                     }
 
                     default:
-                        Console.WriteLine("Usage: {0} <command> <arguments>", Process.GetCurrentProcess().ProcessName);
+                        Console.WriteLine("Usage: {0} <options> <command> <arguments>", Process.GetCurrentProcess().ProcessName);
                         Console.WriteLine();
                         Console.WriteLine("Commands:");
                         Console.WriteLine("\t{0}\t{1}", "extract", "Extracts a GMA file and shows information about it.");
                         Console.WriteLine("\t\tArguments: Input GMA file path, output folder path");
                         Console.WriteLine("\t{0}\t{1}", "create", "Creates a GMA file.");
                         Console.WriteLine("\t\tArguments: Input folder path, output GMA file path");
+                        Console.WriteLine();
+                        Console.WriteLine("Options:");
+                        Console.WriteLine("\t{0}\t{1}", "--minimize-lua", "Causes exported GMAs to have all Lua comments and unneeded whitespace in Lua stripped out.");
+                        Console.WriteLine("\t{0}\t{1}", "--no-minimize-lua", "(default) Will prevent Lua files getting minimized.");
                         Console.WriteLine();
                         return;
                 }
