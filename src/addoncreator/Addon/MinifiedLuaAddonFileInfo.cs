@@ -17,7 +17,10 @@ namespace GarrysMod.AddonCreator.Addon
 
         private byte[] _content;
 
-        private readonly string _stripCommentsRegex = string.Join("|", new[]
+        /// <summary>
+        /// Contains regex which helps stripping out comments (and unnecessary whitespace lines)
+        /// </summary>
+        private readonly string _stripCommentsEmptylineRegex = string.Join("|", new[]
         {
             // block comments
             @"\/\*.*?\*\/",
@@ -32,6 +35,7 @@ namespace GarrysMod.AddonCreator.Addon
             @"[\s]*$",
             @"^[\s]*"
         });
+
         private string _luaCode;
 
         public MinifiedLuaAddonFileInfo(AddonFileInfo actual)
@@ -45,11 +49,13 @@ namespace GarrysMod.AddonCreator.Addon
                 return _content;
 
             _luaCode = Encoding.UTF8.GetString(_fi.GetContents());
+
+            // Remove comments and whitespace lines
             string oldLuaCode;
             do
             {
                 oldLuaCode = _luaCode;
-                _luaCode = Regex.Replace(_luaCode, _stripCommentsRegex,
+                _luaCode = Regex.Replace(_luaCode, _stripCommentsEmptylineRegex,
                     m => m.Groups["linebreak"] != null ? m.Groups["linebreak"].Value : "", RegexOptions.Multiline | RegexOptions.Singleline);
                 _luaCode = _luaCode.Trim();
             } while (oldLuaCode != _luaCode);
