@@ -49,12 +49,12 @@
       <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="policy.2.0.taglib-sharp">
-      <HintPath>..\..\packages\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
+      <HintPath>$(SolutionDir)\packages\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="taglib-sharp">
-      <HintPath>..\..\packages\taglib.2.1.0.0\lib\taglib-sharp.dll</HintPath>
+      <HintPath>$(SolutionDir)\packages\taglib.2.1.0.0\lib\taglib-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
