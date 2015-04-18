@@ -246,7 +246,7 @@ namespace GarrysMod.AddonCreator.Addon
                     .ToDictionary(i => i.Key, i => i.Value);
 
             files = files
-                .Select(f => Assembly.LoadFrom("taglib-sharp.dll")
+                .Select(f => typeof(SupportedMimeType).Assembly
                     .GetTypes()
                     .Where(t => t.IsSubclassOf(typeof (TagLib.File)))
                     .Any(mediaSupport => mediaSupport.GetCustomAttributes(typeof (SupportedMimeType), false)
