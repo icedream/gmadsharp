@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using TagLib;
 using File = System.IO.File;
 
@@ -26,6 +23,7 @@ namespace GarrysMod.AddonCreator.Addon
         /// Creates a new <see cref="MinifiedMediaAddonFileInfo"/> instance using the given addon file.
         /// </summary>
         /// <param name="file">The addon file, supposedly a media file</param>
+        /// <param name="extension">The extension of this media file</param>
         public MinifiedMediaAddonFileInfo(AddonFileInfo file, string extension)
         {
             _tempFile = Path.GetTempFileName();
@@ -37,6 +35,8 @@ namespace GarrysMod.AddonCreator.Addon
             var newTempFile = Path.Combine(
                 dirName,
                 Path.GetFileNameWithoutExtension(_tempFile) + "." + extension);
+            if (File.Exists(newTempFile))
+                File.Delete(newTempFile);
             File.Move(_tempFile, newTempFile);
             _tempFile = newTempFile;
 
@@ -74,8 +74,7 @@ namespace GarrysMod.AddonCreator.Addon
                 }
             }
 
-            using (var s = new FileStream(_tempFile, FileMode.Open, FileAccess.Read))
-            using (var tags = TagLib.File.Create(new StreamFileAbstraction(_tempFile, s, s)))
+            using (var tags = TagLib.File.Create(new FileAbstraction(_tempFile)))
             {
                 if (tags.PossiblyCorrupt && !IgnoreCorrupted)
                 {
