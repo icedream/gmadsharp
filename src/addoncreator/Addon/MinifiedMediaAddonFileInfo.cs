@@ -74,7 +74,8 @@ namespace GarrysMod.AddonCreator.Addon
                 }
             }
 
-            using (var tags = TagLib.File.Create(_tempFile))
+            using (var s = new FileStream(_tempFile, FileMode.Open, FileAccess.Read))
+            using (var tags = TagLib.File.Create(new StreamFileAbstraction(_tempFile, s, s)))
             {
                 if (tags.PossiblyCorrupt && !IgnoreCorrupted)
                 {

@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GarrysMod.AddonCreator</RootNamespace>
     <AssemblyName>gmadsharp</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,20 +42,21 @@
     <OutputPath>$(SolutionDir)\bin\$(Configuration)\$(Platform)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>GarrysMod.AddonCreator.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="policy.2.0.taglib-sharp">
-      <HintPath>$(SolutionDir)\packages\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
+      <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="taglib-sharp">
-      <HintPath>$(SolutionDir)\packages\taglib.2.1.0.0\lib\taglib-sharp.dll</HintPath>
+    <Reference Include="System.IO" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="TagLib.Portable, Version=2.1.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\TagLib.Portable.1.0.2\lib\portable-net45+win8+wpa81\TagLib.Portable.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +75,7 @@
     <Compile Include="Addon\SegmentedAddonFileInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
