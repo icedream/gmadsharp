@@ -19,7 +19,12 @@ namespace GarrysMod.AddonCreator
                 switch (args.Length == 0 ? "" : args[0])
                 {
                     case "--version":
-                        Console.WriteLine("{0} v{1}", Assembly.GetExecutingAssembly().GetName().Name, Assembly.GetExecutingAssembly().GetName().Version);
+                        Console.WriteLine("{0} v{1}",
+                            Assembly.GetExecutingAssembly().GetName().Name,
+                            ((AssemblyInformationalVersionAttribute)
+                                Assembly.GetExecutingAssembly().GetCustomAttributes(
+                                    typeof (AssemblyInformationalVersionAttribute), false).Single())
+                                .InformationalVersion.Split('+').First());
                         args = args.Skip(1).ToArray();
                         break;
                     case "--minimize-lua":
